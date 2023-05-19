@@ -1,6 +1,8 @@
 import time
 import PySimpleGUI as sg
 import pyautogui
+import win32gui
+import win32con
 
 # Define the image filenames.  These need to be in the same order of tooltip_data_list.
 image_filenames = [
@@ -305,6 +307,10 @@ for tooltip_data in tooltip_data_list:
         tooltip_window = sg.Window('', tooltip_layout,
                                    location=(0, 0), no_titlebar=True, keep_on_top=True, grab_anywhere=False,
                                    finalize=True, element_padding=(0, 0), margins=(0, 0))
+        hwnd = win32gui.GetParent(tooltip_window.TKroot.winfo_id())  # Get window handle
+        old_style = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+        new_style = old_style | win32con.WS_EX_TRANSPARENT | win32con.WS_EX_LAYERED
+        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_style)
         tooltip_windows.append(tooltip_window)
     tooltip_windows_list.append(tooltip_windows)
 
